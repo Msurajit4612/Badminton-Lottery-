@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Group Draw</title>
+<title>KAKDWIP SHUTTLE SHOWDOWN 2026</title>
 <style>
 body{
   margin:0;
@@ -12,42 +12,25 @@ body{
 }
 .box{
   background:rgba(0,0,0,0.7);
-  padding:30px;
-  max-width:800px;
-  margin:40px auto;
-  border-radius:12px;
+  padding:40px;
+  max-width:700px;
+  margin:120px auto;
+  text-align:center;
+  border-radius:15px;
 }
-input{padding:6px;margin:4px;width:95%}
-button{padding:10px 20px;margin-top:15px}
+button{
+  padding:14px 40px;
+  font-size:20px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+}
 </style>
 </head>
 <body>
 <div class="box">
-<h2>Enter 24 Teams</h2>
-<div id="teams"></div>
-<button onclick="draw()">Draw Groups</button>
+  <h1>KAKDWIP SHUTTLE SHOWDOWN 2026</h1>
+  <h3>Organized by – Badminton Lovers</h3>
+  <p><b>Date:</b> 21st & 22nd February, 2026</p>
+  <button onclick="location.href='landing.html'">Proceed</button>
 </div>
-
-<script>
-for(let i=1;i<=24;i++){
-  teams.innerHTML+=`<input placeholder="Team ${i}">`;
-}
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
-    let j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-}
-function draw(){
-  let t=[];
-  document.querySelectorAll("input").forEach(i=>i.value&&t.push(i.value));
-  if(t.length!==24){alert("Enter 24 teams");return;}
-  shuffle(t);
-  let g={A:[],B:[],C:[]};
-  t.forEach((x,i)=>g[i%3===0?"A":i%3===1?"B":"C"].push(x));
-  localStorage.setItem("groups",JSON.stringify(g));
-  location.href="group-match.html";
-}
-</script>
-</body>
-</html>
