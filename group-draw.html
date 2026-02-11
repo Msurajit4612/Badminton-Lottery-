@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Group Draw</title>
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial;
+  background:url("bg.jpg") center/cover;
+  color:white;
+}
+.box{
+  background:rgba(0,0,0,0.7);
+  padding:30px;
+  max-width:900px;
+  margin:40px auto;
+  border-radius:12px;
+}
+.groups{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.group{
+  width:260px;
+  background:rgba(255,255,255,0.12);
+  padding:15px;
+  border-radius:10px;
+}
+ul{list-style:none;padding:0}
+li{padding:6px;border-bottom:1px solid rgba(255,255,255,.3)}
+button{padding:12px 25px;margin-top:20px}
+</style>
+</head>
+
+<body>
+<div class="box">
+<h2>🏸 Group Draw</h2>
+
+<div class="groups">
+  <div class="group"><h3>Group A</h3><ul id="A"></ul></div>
+  <div class="group"><h3>Group B</h3><ul id="B"></ul></div>
+  <div class="group"><h3>Group C</h3><ul id="C"></ul></div>
+</div>
+
+<button onclick="goNext()">Group Matches</button>
+</div>
+
+<script>
+let teams = JSON.parse(localStorage.getItem("teams"));
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    let j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+}
+
+shuffle(teams);
+
+let groups = {
+  A: teams.slice(0,8),
+  B: teams.slice(8,16),
+  C: teams.slice(16,24)
+};
+
+["A","B","C"].forEach(g=>{
+  let ul=document.getElementById(g);
+  groups[g].forEach(t=>ul.innerHTML+=`<li>${t}</li>`);
+});
+
+localStorage.setItem("groups",JSON.stringify(groups));
+
+function goNext(){
+  location.href="group-match.html";
+}
+</script>
+</body>
+</html>
