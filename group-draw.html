@@ -7,13 +7,13 @@ body{
   margin:0;
   min-height:100vh;
   font-family:Arial;
-  background:url("794a8c7d610aa877b32aebdd32265d0e_1200x1200_crop_center.jpg") center/cover;
+  background:url("bg.jpg") center/cover;
   color:white;
 }
 .box{
   background:rgba(0,0,0,0.7);
   padding:30px;
-  max-width:900px;
+  max-width:1000px;
   margin:40px auto;
   border-radius:12px;
 }
@@ -32,6 +32,11 @@ body{
 ul{list-style:none;padding:0}
 li{padding:6px;border-bottom:1px solid rgba(255,255,255,.3)}
 button{padding:12px 25px;margin-top:20px}
+.note{
+  font-size:13px;
+  opacity:0.85;
+  margin-top:15px;
+}
 </style>
 </head>
 
@@ -43,6 +48,10 @@ button{padding:12px 25px;margin-top:20px}
   <div class="group"><h3>Group A</h3><ul id="A"></ul></div>
   <div class="group"><h3>Group B</h3><ul id="B"></ul></div>
   <div class="group"><h3>Group C</h3><ul id="C"></ul></div>
+</div>
+
+<div class="note">
+Rule applied: Teams with same first two words are distributed across different groups (max 2 in one group).
 </div>
 
 <button onclick="goNext()">Group Matches</button>
@@ -58,19 +67,80 @@ function shuffle(a){
   }
 }
 
-shuffle(teams);
+/* 🔹 STEP 1: GROUP BY FIRST 2 WORDS */
+let map = {};
+teams.forEach(t=>{
+  let key = t.split(" ").slice(0,2).join(" ").toLowerCase();
+  if(!map[key]) map[key]=[];
+  map[key].push(t);
+});
 
-let groups = {
-  A: teams.slice(0,8),
-  B: teams.slice(8,16),
-  C: teams.slice(16,24)
-};
+/* 🔹 STEP 2: PREPARE EMPTY GROUPS */
+let groups = { A:[], B:[], C:[] };
+let order = ["A","B","C"];
 
+/* 🔹 STEP 3: DISTRIBUTE SIMILAR TEAMS SAFELY */
+Object.values(map).forEach(list=>{
+  shuffle(list);
+
+  list.forEach((team,i)=>{
+    // rotate groups so 3 same prefix go A,B,C
+    let target = order[i % 3];
+
+    // if group already has 8 OR already has 2 similar prefix teams
+    let prefix = team.split(" ").slice(0,2).join(" ").toLowerCase();
+
+    function countSimilar(g){
+      return groups[g].filter(x =>
+        x.split(" ").slice(0,2).join(" ").toLowerCase() === prefix
+      ).length;
+    }
+
+    // find best group
+    let placed = false;
+    for(let g of order){
+      if(groups[g].length < 8 && countSimilar(g) < 2){
+        groups[g].push(team);
+        placed = true;
+        break;
+      }
+    }
+
+    // fallback (should rarely happen)
+    if(!placed){
+      for(let g of order){
+        if(groups[g].length < 8){
+          groups[g].push(team);
+          break;
+        }
+      }
+    }
+  });
+});
+
+/* 🔹 STEP 4: FINAL BALANCING (ENSURE 8 PER GROUP) */
+let leftovers = [];
+["A","B","C"].forEach(g=>{
+  while(groups[g].length > 8){
+    leftovers.push(groups[g].pop());
+  }
+});
+
+shuffle(leftovers);
+
+["A","B","C"].forEach(g=>{
+  while(groups[g].length < 8 && leftovers.length){
+    groups[g].push(leftovers.pop());
+  }
+});
+
+/* 🔹 DISPLAY */
 ["A","B","C"].forEach(g=>{
   let ul=document.getElementById(g);
   groups[g].forEach(t=>ul.innerHTML+=`<li>${t}</li>`);
 });
 
+/* 🔹 SAVE */
 localStorage.setItem("groups",JSON.stringify(groups));
 
 function goNext(){
