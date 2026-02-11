@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Next Round</title>
+<style>
+body{margin:0;background:url("bg.jpg") center/cover;color:white;font-family:Arial}
+.box{background:rgba(0,0,0,0.7);padding:30px;max-width:800px;margin:40px auto;border-radius:12px}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>Next Round Fixtures</h2>
+<div id="out"></div>
+<button onclick="go()">Super Six</button>
+</div>
+
+<script>
+let nextWinners={A:[],B:[],C:[]};
+["A","B","C"].forEach(g=>{
+  out.innerHTML+=`<h3>Group ${g}</h3>`;
+  let w=["Winner 1","Winner 2","Winner 3","Winner 4"];
+  let pairs=[[w[0],w[3]],[w[1],w[2]]];
+  pairs.forEach(p=>out.innerHTML+=`${p[0]} vs ${p[1]}<br>`);
+  nextWinners[g]=["1st Winner","2nd Winner"];
+});
+localStorage.setItem("nextWinners",JSON.stringify(nextWinners));
+function go(){location.href="super-six.html";}
+</script>
+</body>
+</html>
